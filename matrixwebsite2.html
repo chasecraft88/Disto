@@ -47,14 +47,14 @@
 
     <script>
         const matrixContainer = document.getElementById("matrix-container");
-        const characters = "!@#$%^&*()_+-=[]{}|;':,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
         function createCodeCharacter() {
             const character = document.createElement("div");
             character.classList.add("code-character");
             character.textContent = characters[Math.floor(Math.random() * characters.length)];
             character.style.left = `${Math.random() * 100}%`;
-            character.style.top = `${Math.random() * 100}%`;
+            character.style.top = "0";
             matrixContainer.appendChild(character);
         }
 
@@ -67,17 +67,11 @@
             });
         }
 
-        // Create code characters initially
-        for (let i = 0; i < 1000; i++) {
-            createCodeCharacter();
-        }
+        // Periodically create new characters
+        setInterval(createCodeCharacter, 50);
 
         // Animate the code characters
         animateCodeCharacters();
-
-        // Periodically create new characters
-        setInterval(createCodeCharacter, 100);
-
     </script>
 </body>
 </html>
