@@ -9,7 +9,7 @@
             overflow: hidden;
             margin: 0;
         }
-        
+
         #matrix-container {
             position: absolute;
             top: 0;
@@ -19,17 +19,17 @@
             display: flex;
             flex-direction: column;
         }
-        
+
         .code-line {
             display: flex;
             width: 100%;
         }
-        
+
         .code-character {
             opacity: 1;
             animation: animate 8s linear infinite;
         }
-        
+
         @keyframes animate {
             0% {
                 opacity: 1;
@@ -48,12 +48,12 @@
         .section {
             padding: 20px;
         }
-        
+
         .section-header {
             font-size: 24px;
             color: darkpurple;
         }
-        
+
         .section-content {
             font-size: 18px;
             color: red;
@@ -64,6 +64,11 @@
             color: darkpurple;
             text-decoration: none;
             margin-right: 10px;
+            transition: color 0.3s;
+        }
+
+        .custom-link:hover {
+            color: red; /* Change color on hover */
         }
 
         @media (max-width: 768px) {
@@ -90,7 +95,7 @@
             <!-- Add more characters here -->
         </div>
     </div>
-    
+
     <div class="section">
         <div class="section-header">Welcome to ChaseCraft</div>
         <div class="section-content">Explore the possibilities of coding, gaming, arts & crafts, and more.</div>
@@ -99,7 +104,7 @@
     <div class="section">
         <div class="section-header">Popular Links</div>
         <div class="section-content">
-            <a class="custom-link" href="Lightning.html">Link-Lightning1</a>
+            <a class="custom-link" href="Lightning.html">Lightning Storm</a>
             <a class="custom-link" href="your-link-2">Link 2</a>
             <a class="custom-link" href="matrixwebsite2.html">Matrix Website 2</a>
             <a class="custom-link" href="your-link-4">Link 4</a>
