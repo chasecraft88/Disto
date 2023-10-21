@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: black;
+            color: red;
+            font-family: "Courier New", monospace;
+            overflow: hidden;
+            margin: 0;
+        }
+        
+        #matrix-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .code-line {
+            display: flex;
+            width: 100%;
+        }
+        
+        .code-character {
+            opacity: 0;
+            animation: animate 8s linear infinite;
+        }
+        
+        @keyframes animate {
+            0% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+            1% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            12% {
+                opacity: 0;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            padding: 20px;
+        }
+        
+        .section-header {
+            font-size: 24px;
+            color: darkpurple;
+        }
+        
+        .section-content {
+            font-size: 18px;
+            color: red;
+        }
+
+        .custom-link {
+            font-size: 20px;
+            color: darkpurple;
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .section-header {
+                font-size: 18px;
+            }
+
+            .section-content {
+                font-size: 14px;
+            }
+
+            .custom-link {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="matrix-container">
+        <div class="code-line">
+            <div class="code-character">_</div>
+            <div class="code-character">_</div>
+            <!-- Add more characters here -->
+        </div>
+        <!-- Add more code lines here -->
+    </div>
+    
+    <div class="section">
+        <div class="section-header">Welcome to ChaseCraft</div>
+        <div class="section-content">Explore the possibilities of coding, gaming, arts & crafts, and more.</div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">Popular Links</div>
+        <div class="section-content">
+            <a class="custom-link" href="your-link-1">Link 1</a>
+            <a class="custom-link" href="your-link-2">Link 2</a>
+            <!-- Add more customized links as needed -->
+        </div>
+    </div>
+
+    <script>
+        const codeLines = document.querySelectorAll(".code-line");
+
+        function generateRandomCharacter() {
+            const characters = "!@#$%^&*()_+-=[]{}|;':,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            return characters[Math.floor(Math.random() * characters.length)];
+        }
+
+        function fillCodeLines() {
+            codeLines.forEach((line) => {
+                const codeCharacters = line.querySelectorAll(".code-character");
+                codeCharacters.forEach((char) => {
+                    char.textContent = generateRandomCharacter();
+                });
+            });
+        }
+
+        // Generate random characters initially and keep updating
+        fillCodeLines();
+        setInterval(fillCodeLines, 500);
+    </script>
+</body>
+</html>
