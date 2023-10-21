@@ -8,60 +8,29 @@
             font-family: "Courier New", monospace;
             overflow: hidden;
             margin: 0;
-            display: flex; /* Added display property for body */
-            justify-content: center; /* Center content horizontally */
-            align-items: center; /* Center content vertically */
         }
-        
+
         #matrix-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
             z-index: -1; /* Place it behind other content */
         }
-        
-        .code-line {
-            display: flex;
-            width: 100%;
-        }
-        
+
         .code-character {
-            opacity: 1;
-            animation: animate 5s linear infinite; /* Adjust animation duration to 5s for better visibility */
-        }
-        
-        @keyframes animate {
-            0% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            5% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            10% {
-                opacity: 0.5; /* Slightly reduce opacity */
-                transform: translateY(-100%);
-            }
+            position: absolute;
+            opacity: 0;
+            font-size: 16px; /* Adjust font size as needed */
         }
 
         /* Rest of your CSS remains the same */
     </style>
 </head>
 <body>
-    <div id="matrix-container">
-        <!-- Add multiple code lines as needed -->
-        <div class="code-line">
-            <div class="code-character">_</div>
-            <div class="code-character">_</div>
-            <!-- Add more characters here -->
-        </div>
-    </div>
-    
+    <div id="matrix-container"></div>
+
     <div class="section">
         <div class="section-header">Welcome to ChaseCraft</div>
         <div class="section-content">Explore the possibilities of coding, gaming, arts & crafts, and more.</div>
@@ -77,25 +46,38 @@
     </div>
 
     <script>
-        const codeLines = document.querySelectorAll(".code-line");
+        const matrixContainer = document.getElementById("matrix-container");
+        const characters = "!@#$%^&*()_+-=[]{}|;':,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-        function generateRandomCharacter() {
-            const characters = "!@#$%^&*()_+-=[]{}|;':,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-            return characters[Math.floor(Math.random() * characters.length)];
+        function createCodeCharacter() {
+            const character = document.createElement("div");
+            character.classList.add("code-character");
+            character.textContent = characters[Math.floor(Math.random() * characters.length)];
+            character.style.left = `${Math.random() * 100}%`;
+            character.style.top = `${Math.random() * 100}%`;
+            matrixContainer.appendChild(character);
         }
 
-        function fillCodeLines() {
-            codeLines.forEach((line) => {
-                const codeCharacters = line.querySelectorAll(".code-character");
-                codeCharacters.forEach((char) => {
-                    char.textContent = generateRandomCharacter();
-                });
+        function animateCodeCharacters() {
+            const codeCharacters = document.querySelectorAll(".code-character");
+
+            codeCharacters.forEach((char) => {
+                char.style.opacity = 1;
+                char.style.transform = `translateY(${window.innerHeight}px)`;
             });
         }
 
-        // Generate random characters initially and keep updating
-        fillCodeLines();
-        setInterval(fillCodeLines, 500);
+        // Create code characters initially
+        for (let i = 0; i < 1000; i++) {
+            createCodeCharacter();
+        }
+
+        // Animate the code characters
+        animateCodeCharacters();
+
+        // Periodically create new characters
+        setInterval(createCodeCharacter, 100);
+
     </script>
 </body>
 </html>
