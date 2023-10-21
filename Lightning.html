@@ -2,13 +2,14 @@
 <html>
 <head>
   <title>Lightning Storm</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
   <style>
     body {
       background-color: black;
       font-family: 'Courier New', monospace;
       overflow: hidden;
       color: white;
+      margin: 0;
     }
 
     .lightning-container {
@@ -39,7 +40,7 @@
       height: 100%;
       background-color: white; /* Flash color */
       opacity: 0;
-      animation: flash-effect 0.1s infinite alternate;
+      animation: flash-effect 5s infinite alternate;
     }
 
     @keyframes lightning-strike {
@@ -52,11 +53,11 @@
     }
 
     @keyframes flash-effect {
-      0% {
-        opacity: 1;
-      }
-      100% {
+      0%, 100% {
         opacity: 0;
+      }
+      50% {
+        opacity: 1;
       }
     }
 
@@ -104,5 +105,44 @@
     <p>Experience the power of nature in this electrifying display. Witness the breathtaking beauty of a storm from the safety of your screen.</p>
     <a class="button" href="#">Learn More</a>
   </div>
+
+  <script>
+    let detail = 0.5;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      stroke(0);
+      background(255);
+      noLoop();
+      function createLightning() {
+        clear();
+        drawLightning(random(0, windowWidth), 0, random(0, windowWidth), windowHeight, random(50, 200));
+        flashEffect();
+      }
+      createLightning();
+      setInterval(createLightning, 10000);
+    }
+
+    function drawLightning(x1, y1, x2, y2, disp) {
+      let midX, midY;
+      if (disp < detail)
+        line(x1, y1, x2, y2);
+      else {
+        midX = (x1 + x2) / 2;
+        midY = (y1 + y2) / 2;
+        midX = midX + (random(-1, 1)) * disp;
+        midY = midY + (random(-1, 1)) * disp;
+        drawLightning(x1, y1, midX, midY, disp / 2.0);
+        drawLightning(x2, y2, midX, midY, disp / 2.0);
+      }
+    }
+
+    function flashEffect() {
+      document.querySelector('.flash').style.opacity = 1;
+      setTimeout(function() {
+        document.querySelector('.flash').style.opacity = 0;
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
