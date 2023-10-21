@@ -8,6 +8,9 @@
             font-family: "Courier New", monospace;
             overflow: hidden;
             margin: 0;
+            display: flex; /* Added display property for body */
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
         }
         
         #matrix-container {
@@ -18,7 +21,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            z-index: -1; /* Added to place it behind other content */
+            z-index: -1; /* Place it behind other content */
         }
         
         .code-line {
@@ -28,7 +31,7 @@
         
         .code-character {
             opacity: 1;
-            animation: animate 8s linear infinite;
+            animation: animate 5s linear infinite; /* Adjust animation duration to 5s for better visibility */
         }
         
         @keyframes animate {
