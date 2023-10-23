@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magical Spell</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+  <script>
+    let creatureImage;
+    let creatureX, creatureY;
+    let isSummoned = false;
+    let particles = [];
+
+    function preload() {
+      creatureImage = loadImage('assets/img4.jpg');  // You'll need an image for your creature
+    }
+
+    function setup() {
+      createCanvas(400, 400);
+      creatureX = width / 2;
+      creatureY = height / 2;
+    }
+
+    function draw() {
+      background(220);
+      
+      if (isSummoned) {
+        for (let i = particles.length - 1; i >= 0; i--) {
+          particles[i].update();
+          particles[i].display();
+          if (particles[i].isFinished()) {
+            particles.splice(i, 1);
+          }
+        }
+        image(creatureImage, creatureX, creatureY);
+      }
+    }
+
+    function mousePressed() {
+      if (!isSummoned) {
+        isSummoned = true;
+        summonCreature();
+      }
+    }
+
+    function summonCreature() {
+      creatureX = random(width);
+      creatureY = random(height);
+      
+      // Create particles for magical effect
+      for (let i = 0; i < 50; i++) {
+        particles.push(new Particle(creatureX, creatureY));
+      }
+    }
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.velocityX = random(-1, 1);
+        this.velocityY = random(-2, 0);
+        this.alpha = 255;
+      }
+      
+      update() {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        this.alpha -= 5;
+      }
+      
+      display() {
+        noStroke();
+        fill(255, this.alpha);
+        ellipse(this.x, this.y, 10);
+      }
+      
+      isFinished() {
+        return this.alpha < 0;
+      }
+    }
+  </script>
+</body>
+</html>
