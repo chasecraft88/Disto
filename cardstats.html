@@ -1,13 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar System Explorer Cards</title>
-    <style>
-        /* Add your CSS styles here */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Webpage Title</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      position: relative; /* Make the body relative for absolute positioning of the canvas */
+    }
 
-        
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+    .card {
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px;
+      width: 300px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin: 8px 0;
+    }
+
+    .card p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .card .stats {
+      font-weight: bold;
+    }
+
+    .card.special {
+      background: linear-gradient(135deg, #800080, #ff00ff);
+      color: #fff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+      font-family: 'Cursive', cursive;
+    }
+
 .card {
     border: 2px solid #333;
     border-radius: 8px;
@@ -60,47 +105,6 @@
 
 /* Add more card styles as desired */
 
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: url('your-starry-night-image.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-
-        .card {
-            border: 2px solid #333;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 16px;
-            width: 300px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            background-color: rgba(255, 255, 255, 0.8); /* Add opacity to the card background */
-            display: inline-block;
-            vertical-align: top;
-        }
-
-        .card h3 {
-            font-size: 20px;
-            margin: 8px 0;
-        }
-
-        .card p {
-            font-size: 16px;
-            margin: 8px 0;
-        }
-
-        .card .stats {
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <!-- Your card content here -->
-
-<head>
-    <title>Solar System Explorer Cards</title>
-    <style>
-        /* Add your CSS styles here */
         .card {
             border: 2px solid #333;
             border-radius: 8px;
@@ -127,8 +131,60 @@
             font-weight: bold;
         }
     </style>
-</head>
-<body>
+
+    /* Add your unique styles for special cards here */
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <script>
+    let stars = [];
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      for (let i = 0; i < 800; i++) {
+        stars[i] = new Star();
+      }
+    }
+
+    function draw() {
+      background(0);
+      translate(width / 2, height / 2);
+
+      for (let star of stars) {
+        star.update();
+        star.show();
+      }
+    }
+
+    class Star {
+      constructor() {
+        this.x = random(-width, width);
+        this.y = random(-height, height);
+        this.z = random(width);
+
+        this.update = function() {
+          this.z -= 10;
+          if (this.z < 1) {
+            this.z = width;
+            this.x = random(-width, width);
+            this.y = random(-height, height);
+          }
+        }
+
+        this.show = function() {
+          fill(random(150, 255), random(150, 255), random(150, 255));
+          noStroke();
+          let sx = map(this.x / this.z, 0, 1, 0, width);
+          let sy = map(this.y / this.z, 0, 1, 0, height);
+          let r = map(this.z, 0, width, 16, 0);
+          ellipse(sx, sy, r, r);
+        }
+      }
+    }
+  </script>
+
+  <!-- Your content goes here -->
+
     <div class="card">
         <h3>Stellar Entity</h3>
         <p class="lore">A celestial being of immense power, forged in the heart of a dying star.</p>
@@ -202,12 +258,6 @@
     <p class="stats">Ability: Nebula Vision</p>
     <p class="stats">Effect: Foresees impending dangers and grants protection.</p>
 </div>
-
-<!-- Add more cards as desired -->
-
-</body>
-</html>
-
     <!-- Add more cards as needed -->
 
 <!-- Existing HTML and CSS code... -->
@@ -395,63 +445,6 @@
 
 <!-- Existing HTML and CSS code... -->
 
-<head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <script>
-    let stars = [];
-
-    function setup() {
-      createCanvas(windowWidth, windowHeight);
-      for (let i = 0; i < 800; i++) {
-        stars[i] = new Star();
-      }
-    }
-
-    function draw() {
-      background(0);
-      translate(width / 2, height / 2);
-
-      for (let star of stars) {
-        star.update();
-        star.show();
-      }
-    }
-
-    class Star {
-      constructor() {
-        this.x = random(-width, width);
-        this.y = random(-height, height);
-        this.z = random(width);
-
-        this.update = function() {
-          this.z -= 10;
-          if (this.z < 1) {
-            this.z = width;
-            this.x = random(-width, width);
-            this.y = random(-height, height);
-          }
-        }
-
-        this.show = function() {
-          fill(random(150, 255), random(150, 255), random(150, 255));
-          noStroke();
-          let sx = map(this.x / this.z, 0, 1, 0, width);
-          let sy = map(this.y / this.z, 0, 1, 0, height);
-          let r = map(this.z, 0, width, 16, 0);
-          ellipse(sx, sy, r, r);
-        }
-      }
-    }
-  </script>
-
 <div class="card special">
     <h3>Cosmic Nexus</h3>
     <p class="lore">An enigmatic entity connecting all celestial bodies, controlling cosmic forces.</p>
@@ -539,9 +532,19 @@
 
 <!-- Add even more normal cards as desired -->
 
-</body>
-</html>
 
+  <div class="card">
+    <h3>Stellar Entity</h3>
+    <p class="lore">A celestial being of immense power, forged in the heart of a dying star.</p>
+    <p class="stats">Health: 100</p>
+    <p class="stats">Power: 90</p>
+    <p class="stats">Ability: Solar Flare</p>
+    <p class="stats">Effect: Deals 20 damage to all foes.</p>
+  </div>
+
+  <div class="card">
+    <!-- Add more cards as needed -->
+  </div>
 
 </body>
 </html>
