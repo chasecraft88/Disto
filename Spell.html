@@ -13,9 +13,9 @@
     let isSummoned = false;
     let particles = [];
 
-    function preload() function preload() {
-  creatureImage = loadImage('assets/img4.jpg');
-}
+    function preload() {
+      creatureImage = loadImage('assets/img4.jpg');
+    }
 
     function setup() {
       createCanvas(400, 400);
@@ -72,7 +72,7 @@
       
       display() {
         noStroke();
-        fill(255, this alpha);
+        fill(255, this.alpha);
         ellipse(this.x, this.y, 10);
       }
       
