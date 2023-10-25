@@ -12,8 +12,10 @@
     let creatureX, creatureY;
     let isSummoned = false;
     let particles = [];
-    function
-    creatureImage = loadImage('assets/img4.jpg');  // Ensure the filename case matches the actual file.
+
+    function preload() {
+      creatureImage = loadImage('assets/img4.jpg');  // Ensure the filename case matches the actual file.
+    }
 
     function setup() {
       createCanvas(400, 400);
@@ -70,7 +72,7 @@
       
       display() {
         noStroke();
-        fill(255, this.alpha);
+        fill(255, this alpha);
         ellipse(this.x, this.y, 10);
       }
       
