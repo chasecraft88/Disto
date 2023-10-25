@@ -1,83 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Magical Spell</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Special Attack Effects</title>
+    <style>
+        /* Define your CSS classes for effects */
+        .fire-effect {
+            animation: fire 1s linear infinite;
+        }
+        
+        .cosmic-effect {
+            animation: cosmic 1s linear infinite;
+        }
+        
+        .magic-effect {
+            animation: magic 1s linear infinite;
+        }
+
+        /* Define keyframe animations for effects */
+        @keyframes fire {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes cosmic {
+            0% { background-color: #2200FF; }
+            50% { background-color: #FF0066; }
+            100% { background-color: #2200FF; }
+        }
+        
+        @keyframes magic {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-  <script>
-    let creatureImage;
-    let creatureX, creatureY;
-    let isSummoned = false;
-    let particles = [];
+    <!-- Clickable Images -->
+    <img id="fireImage" class="fire-effect" src="assets/Img33.jpg" alt="Fire Attack">
+    <img id="cosmicImage" class="cosmic-effect" src="assets/Img8.jpg" alt="Cosmic Attack">
+    <img id="magicImage" class="magic-effect" src="assets/Img10.jpg" alt="Magic Attack">
 
-    function preload() {
-      creatureImage = loadImage('assets/img4.jpg');  // Ensure the filename case matches the actual file.
-    }
+    <script>
+        // JavaScript to handle click events
+        const fireImage = document.getElementById('fireImage');
+        const cosmicImage = document.getElementById('cosmicImage');
+        const magicImage = document.getElementById('magicImage');
 
-    function setup() {
-      createCanvas(400, 400);
-      creatureX = width / 2;
-      creatureY = height / 2;
-      image(creatureImage, creatureX, creatureY);  // Display the image initially.
-    }
+        // Add click event listeners for each image
+        fireImage.addEventListener('click', () => {
+            fireImage.classList.toggle('fire-effect');
+        });
 
-    function draw() {
-      if (isSummoned) {
-        for (let i = particles.length - 1; i >= 0; i--) {
-          particles[i].update();
-          particles[i].display();
-          if (particles[i].isFinished()) {
-            particles.splice(i, 1);
-          }
-        }
-      }
-    }
+        cosmicImage.addEventListener('click', () => {
+            cosmicImage.classList.toggle('cosmic-effect');
+        });
 
-    function mousePressed() {
-      if (!isSummoned) {
-        isSummoned = true;
-        summonCreature();
-      }
-    }
-
-    function summonCreature() {
-      creatureX = random(width);
-      creatureY = random(height);
-      
-      // Create particles for magical effect
-      for (let i = 0; i < 50; i++) {
-        particles.push(new Particle(creatureX, creatureY));
-      }
-    }
-
-    class Particle {
-      constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.velocityX = random(-1, 1);
-        this.velocityY = random(-2, 0);
-        this.alpha = 255;
-      }
-      
-      update() {
-        this.x += this.velocityX;
-        this.y += this.velocityY;
-        this.alpha -= 5;
-      }
-      
-      display() {
-        noStroke();
-        fill(255, this.alpha);
-        ellipse(this.x, this.y, 10);
-      }
-      
-      isFinished() {
-        return this.alpha < 0;
-      }
-    }
-  </script>
+        magicImage.addEventListener('click', () => {
+            magicImage.classList.toggle('magic-effect');
+        });
+    </script>
 </body>
 </html>
