@@ -20,9 +20,13 @@
     <canvas id="c"></canvas>
 
     <script>
-        var w = c.width = window.innerWidth,
-            h = c.height = window.innerHeight,
-            ctx = c.getContext('2d'),
+        var w, h, ctx, opts, tick, lines, dieX, dieY, baseRad;
+
+        function initialize() {
+            var canvas = document.getElementById('c');
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
+            ctx = canvas.getContext('2d');
 
             opts = {
                 len: 20,
@@ -46,22 +50,34 @@
                 cy: h / 2,
                 repaintAlpha: 0.04,
                 hueChange: 0.1
-            },
+            };
 
-            tick = 0,
-            lines = [],
-            dieX = w / 2 / opts.len,
-            dieY = h / 2 / opts.len,
+            tick = 0;
+            lines = [];
+            dieX = w / 2 / opts.len;
+            dieY = h / 2 / opts.len;
 
             baseRad = Math.PI * 2 / 6;
 
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, w, h);
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, w, h);
+
+            loop();
+
+            window.addEventListener('resize', function () {
+                w = canvas.width = window.innerWidth;
+                h = canvas.height = window.innerHeight;
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, w, h);
+                opts.cx = w / 2;
+                opts.cy = h / 2;
+                dieX = w / 2 / opts.len;
+                dieY = h / 2 / opts.len;
+            });
+        }
 
         function loop() {
-
             window.requestAnimationFrame(loop);
-
             ++tick;
 
             ctx.globalCompositeOperation = 'source-over';
@@ -78,8 +94,8 @@
 
         function Line() {
         }
-        Line.prototype.beginPhase = function () {
 
+        Line.prototype.beginPhase = function () {
             this.x += this.addedX;
             this.y += this.addedY;
 
@@ -93,40 +109,27 @@
             if (Math.random() < opts.dieChance || this.x > dieX || this.x < -dieX || this.y > dieY || this.y < -dieY)
                 this.reset();
         }
-        Line.prototype.step = function () {
 
+        Line.prototype.step = function () {
             ++this.time;
 
             if (this.time >= this.targetTime)
                 this.beginPhase();
 
-            var prop = this.time / this.targetTime,
-                wave = Math.sin(prop * Math.PI / 2),
-                x = this.addedX * wave,
-                y = this.addedY * wave;
+            var prop = this.time / this.targetTime;
+            var wave = Math.sin(prop * Math.PI / 2);
+            var x = this.addedX * wave;
+            var y = this.addedY * wave;
 
             ctx.shadowBlur = prop * opts.shadowToTimePropMult;
             ctx.fillStyle = ctx.shadowColor = this.color.replace('light', opts.baseLight + opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier));
             ctx.fillRect(opts.cx + (this.x + x) * opts.len, opts.cy + (this.y + y) * opts.len, 2, 2);
 
             if (Math.random() < opts.sparkChance)
-                ctx.fillRect(opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.sparkSize, opts.sparkSize)
+                ctx.fillRect(opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.sparkSize, opts.sparkSize);
         }
-        loop();
 
-        window.addEventListener('resize', function () {
-
-            w = c.width = window.innerWidth;
-            h = c.height = window.innerHeight;
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, w, h);
-
-            opts.cx = w / 2;
-            opts.cy = h / 2;
-
-            dieX = w / 2 / opts.len;
-            dieY = h / 2 / opts.len;
-        });
+        initialize();
     </script>
 </body>
 </html>
