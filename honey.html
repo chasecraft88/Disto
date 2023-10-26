@@ -38,7 +38,7 @@
                 sparkDist: 10,
                 sparkSize: 2,
 
-                color: 'hsl(hue,100%,light%)',
+                color: 'hsl(hue,100%,light%)', // Dynamic color values
                 baseLight: 50,
                 addedLight: 10,
                 shadowToTimePropMult: 6,
@@ -91,7 +91,22 @@
         }
 
         function Line() {
+            this.reset();
         }
+
+        Line.prototype.reset = function () {
+            this.x = 0;
+            this.y = 0;
+            this.time = 0;
+            this.targetTime = 0;
+            this.rad = 0;
+            this.addedX = 0;
+            this.addedY = 0;
+            this.cumulativeTime = 0;
+            this.lightInputMultiplier = 0;
+            this.color = '';
+        };
+
         Line.prototype.beginPhase = function () {
             this.x += this.addedX;
             this.y += this.addedY;
@@ -105,10 +120,11 @@
 
             if (Math.random() < opts.dieChance || this.x > dieX || this.x < -dieX || this.y > dieY || this.y < -dieY)
                 this.reset();
-        }
+        };
 
         Line.prototype.step = function () {
             ++this.time;
+            ++this.cumulativeTime;
 
             if (this.time >= this.targetTime)
                 this.beginPhase();
@@ -119,12 +135,22 @@
             var y = this.addedY * wave;
 
             ctx.shadowBlur = prop * opts.shadowToTimePropMult;
-            ctx.fillStyle = ctx.shadowColor = this.color.replace('light', opts.baseLight + opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier));
+            this.lightInputMultiplier += opts.baseLightInputMultiplier + opts.addedLightInputMultiplier * Math.random();
+            this.color = opts.color
+                .replace('hue', tick * opts.hueChange)
+                .replace('light', opts.baseLight + opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier));
+
+            ctx.fillStyle = ctx.shadowColor = this.color;
             ctx.fillRect(opts.cx + (this.x + x) * opts.len, opts.cy + (this.y + y) * opts.len, 2, 2);
 
             if (Math.random() < opts.sparkChance)
-                ctx.fillRect(opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2, opts.sparkSize, opts.sparkSize);
-        }
+                ctx.fillRect(
+                    opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                    opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                    opts.sparkSize,
+                    opts.sparkSize
+                );
+        };
 
         initialize();
     </script>
