@@ -18,6 +18,8 @@
 </head>
 <body>
     <canvas id="c"></canvas>
+    <div id="gui" style="position: absolute; top: 20px; left: 20px;"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js"></script>
     <script>
         var c = document.getElementById('c');
         var w, h, ctx, opts, tick, lines, dieX, dieY, baseRad;
@@ -72,6 +74,27 @@
                 dieX = w / 2 / opts.len;
                 dieY = h / 2 / opts.len;
             });
+
+            // Initialize dat.GUI for controls
+            const gui = new dat.GUI({ autoPlace: false });
+            gui.add(opts, 'len', 5, 50).name('Line Length');
+            gui.add(opts, 'count', 10, 200).name('Line Count');
+            gui.add(opts, 'baseTime', 1, 30).name('Base Time');
+            gui.add(opts, 'addedTime', 1, 30).name('Added Time');
+            gui.add(opts, 'dieChance', 0, 1).name('Die Chance');
+            gui.add(opts, 'spawnChance', 0, 1).name('Spawn Chance');
+            gui.add(opts, 'sparkChance', 0, 1).name('Spark Chance');
+            gui.add(opts, 'sparkDist', 1, 20).name('Spark Distance');
+            gui.add(opts, 'sparkSize', 1, 10).name('Spark Size');
+            gui.add(opts, 'baseLight', 0, 100).name('Base Light');
+            gui.add(opts, 'addedLight', 0, 50).name('Added Light');
+            gui.add(opts, 'shadowToTimePropMult', 1, 20).name('Shadow Time Multiplier');
+            gui.add(opts, 'baseLightInputMultiplier', 0.001, 0.1).name('Base Light Input Multiplier');
+            gui.add(opts, 'addedLightInputMultiplier', 0.001, 0.1).name('Added Light Input Multiplier');
+            gui.add(opts, 'repaintAlpha', 0, 1).name('Repaint Alpha');
+            gui.add(opts, 'hueChange', 0.01, 1).name('Hue Change');
+            const customContainer = document.getElementById('gui');
+            customContainer.appendChild(gui.domElement);
         }
 
         function loop() {
@@ -137,22 +160,19 @@
             ctx.shadowBlur = prop * opts.shadowToTimePropMult;
             this.lightInputMultiplier += opts.baseLightInputMultiplier + opts.addedLightInputMultiplier * Math.random();
             this.color = opts.color
-                .replace('hue', tick * opts.hueChange)
-                .replace('light', opts.baseLight + opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier));
+                .replace('hue', tick * opts.hueChange)            .replace('light', opts.baseLight + opts.addedLight * Math.sin(this.cumulativeTime * this.lightInputMultiplier));
 
-            ctx.fillStyle = ctx.shadowColor = this.color;
-            ctx.fillRect(opts.cx + (this.x + x) * opts.len, opts.cy + (this.y + y) * opts.len, 2, 2);
+        ctx.fillStyle = ctx.shadowColor = this.color;
+        ctx.fillRect(opts.cx + (this.x + x) * opts.len, opts.cy + (this.y + y) * opts.len, 2, 2);
 
-            if (Math.random() < opts.sparkChance)
-                ctx.fillRect(
-                    opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
-                    opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
-                    opts.sparkSize,
-                    opts.sparkSize
-                );
-        };
+        if (Math.random() < opts.sparkChance)
+            ctx.fillRect(
+                opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                opts.sparkSize,
+                opts.sparkSize
+            );
+    }
 
-        initialize();
-    </script>
-</body>
-</html>
+    initialize();
+</script>
