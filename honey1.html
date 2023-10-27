@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Circuitry with Neon Hexagon</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="c"></canvas>
+    <div id="gui" style="position: absolute; top: 20px; left: 20px;"></div>
+    <script>
+        var c = document.getElementById('c');
+        var w, h, ctx, opts, tick, lines, dieX, dieY, baseRad, hexagonAngle;
+
+        function initialize() {
+            w = c.width = window.innerWidth;
+            h = c.height = window.innerHeight;
+            ctx = c.getContext('2d');
+
+            opts = {
+                len: 20,
+                count: 50,
+                baseTime: 10,
+                addedTime: 10,
+                dieChance: 0.05,
+                spawnChance: 1,
+                sparkChance: 0.1,
+                sparkDist: 10,
+                sparkSize: 2,
+
+                // Color is the only vector aspect here
+                color: 'hsl(120, 100%, 50%)', // Green color
+
+                cx: w / 2,
+                cy: h / 2,
+                repaintAlpha: 0.04,
+                hueChange: 0.1
+            };
+
+            tick = 0;
+            lines = [];
+            dieX = w / 2 / opts.len;
+            dieY = h / 2 / opts.len;
+            baseRad = Math.PI * 2 / 6; // For hexagon
+            hexagonAngle = 0;
+
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, w, h);
+
+            loop();
+
+            window.addEventListener('resize', function () {
+                w = c.width = window.innerWidth;
+                h = c.height = window.innerHeight;
+                ctx.fillStyle = 'black';
+                ctx.fillRect(0, 0, w, h);
+                opts.cx = w / 2;
+                opts.cy = h / 2;
+                dieX = w / 2 / opts.len;
+                dieY = h / 2 / opts.len;
+            });
+
+            // Initialize dat.GUI for controls
+            const gui = new dat.GUI({ autoPlace: false });
+            gui.add(opts, 'len', 5, 50).name('Line Length');
+            gui.add(opts, 'count', 10, 200).name('Line Count');
+            gui.add(opts, 'baseTime', 1, 30).name('Base Time');
+            gui.add(opts, 'addedTime', 1, 30).name('Added Time');
+            gui.add(opts, 'dieChance', 0, 1).name('Die Chance');
+            gui.add(opts, 'spawnChance', 0, 1).name('Spawn Chance');
+            gui.add(opts, 'sparkChance', 0, 1).name('Spark Chance');
+            gui.add(opts, 'sparkDist', 1, 20).name('Spark Distance');
+            gui.add(opts, 'sparkSize', 1, 10).name('Spark Size');
+            gui.add(opts, 'repaintAlpha', 0, 1).name('Repaint Alpha');
+            gui.add(opts, 'hueChange', 0.01, 1).name('Hue Change');
+            const customContainer = document.getElementById('gui');
+            customContainer.appendChild(gui.domElement);
+        }
+
+        function loop() {
+            window.requestAnimationFrame(loop);
+            ++tick;
+            hexagonAngle += 0.005;
+
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'rgba(0,0,0,alp)'.replace('alp', opts.repaintAlpha);
+            ctx.fillRect(0, 0, w, h);
+            ctx.globalCompositeOperation = 'lighter';
+
+            // Draw the rotating neon hexagon
+            drawNeonHexagon();
+
+            if (lines.length < opts.count && Math.random() < opts.spawnChance)
+                lines.push(new Line);
+
+            lines.map(function (line) { line.step(); });
+        }
+
+        function drawNeonHexagon() {
+            var cx = opts.cx;
+            var cy = opts.cy;
+            var hexagonSize = 150;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(hexagonAngle);
+
+            ctx.beginPath();
+            for (var i = 0; i < 6; i++) {
+                var x = hexagonSize * Math.cos(Math.PI / 3 * i);
+                var y = hexagonSize * Math.sin(Math.PI / 3 * i);
+                ctx.lineTo(x, y);
+            }
+
+            ctx.closePath();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.7)';
+            ctx.stroke();
+            ctx.globalCompositeOperation = 'lighter';
+
+            ctx.beginPath();
+            for (var i = 0; i < 6; i++) {
+                var x = (hexagonSize * 1.2) * Math.cos(Math.PI / 3 * i);
+                var y = (hexagonSize * 1.2) * Math.sin(Math.PI / 3 * i);
+                ctx.lineTo(x, y);
+            }
+
+            ctx.closePath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(0, 0, 255, 0.7)';
+            ctx.stroke();
+
+            ctx.restore();
+        }
+
+        function Line() {
+            this.reset();
+        }
+
+        Line.prototype.reset = function () {
+            this.x = 0;
+            this.y = 0;
+            this.time = 0;
+            this.targetTime = 0;
+            this.rad = 0;
+            this.addedX = 0 ;
+            this.addedY = 0;
+            this.cumulativeTime = 0;
+        };
+
+        Line.prototype.beginPhase = function () {
+            this.x += this.addedX;
+            this.y += this.addedY;
+
+            this.time = 0;
+            this.targetTime = (opts.baseTime + opts.addedTime * Math.random()) | 0;
+
+            this.rad += baseRad * (Math.random() < 0.5 ? 1 : -1);
+            this.addedX = Math.cos(this.rad);
+            this.addedY = Math.sin(this.rad);
+
+            if (Math.random() < opts.dieChance || this.x > dieX || this.x < -dieX || this.y > dieY || this.y < -dieY)
+                this.reset();
+        };
+
+        Line.prototype.step = function () {
+            ++this.time;
+            ++this.cumulativeTime;
+
+            if (this.time >= this.targetTime)
+                this.beginPhase();
+
+            var prop = this.time / this.targetTime;
+            var wave = Math.sin(prop * Math.PI / 2);
+            var x = this.addedX * wave;
+            var y = this.addedY * wave;
+
+            ctx.shadowBlur = prop * 6; // shadow blur is a vector-like aspect
+            this.color = opts.color;
+
+            ctx.fillStyle = ctx.shadowColor = this.color;
+            ctx.fillRect(opts.cx + (this.x + x) * opts.len, opts.cy + (this.y + y) * opts.len, 2, 2);
+
+            if (Math.random() < opts.sparkChance)
+                ctx.fillRect(
+                    opts.cx + (this.x + x) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                    opts.cy + (this.y + y) * opts.len + Math.random() * opts.sparkDist * (Math.random() < 0.5 ? 1 : -1) - opts.sparkSize / 2,
+                    opts.sparkSize,
+                    opts.sparkSize
+                );
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
+```
