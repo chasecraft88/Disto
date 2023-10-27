@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Particle Swarm</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="controls">
+    <label for="particleCount">Number of Particles:</label>
+    <input type="range" id="particleCount" min="10" max="100">
+    <br>
+    <label for="particleSpeed">Particle Speed:</label>
+    <input type="range" id="particleSpeed" min="0.01" max="0.1" step="0.01">
+    <br>
+    <label for="trailLength">Trail Length:</label>
+    <input type="range" id="trailLength" min="0.01" max="0.5" step="0.01">
+  </div>
+  <script>
+    var canvas = document.getElementById('c');
+    var ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    var colors = ['#F9EBE6', '#ED8D2E', '#312620', '#D65076'];
+
+    var mouse = {
+      x: canvas.width / 2,
+      y: canvas.height / 2
+    };
+
+    canvas.addEventListener('mousemove', function(event) {
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+    });
+
+    window.addEventListener('resize', function() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    function randomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function Particle(x, y, radius, color) {
+      this.x = x;
+      this.y = y;
+      this.radius = radius;
+      this.color = color;
+      this.radians = Math.random() * Math.PI * 2;
+      this.velocity = 0.05;
+      this.distanceFromCenter = randomInt(50, 120);
+      this.lastMouse = {
+        x: x,
+        y: y
+      };
+
+      this.update = function() {
+        const lastPoint = {
+          x: this.x,
+          y: this.y
+        };
+
+        // Move points over time
+        this.radians += this.velocity;
+
+        // Drag effect
+        this.lastMouse.x += (mouse.x - this.lastMouse.x) * 0.05;
+        this.lastMouse.y += (mouse.y - this.lastMouse.y) * 0.05;
+
+        // Circular Motion
+        this.x = this.lastMouse.x + Math.cos(this.radians) * this.distanceFromCenter;
+        this.y = this.lastMouse.y + Math.sin(this.radians) * this.distanceFromCenter;
+        this.draw(lastPoint);
+      };
+
+      this.draw = function(lastPoint) {
+        ctx.beginPath();
+        ctx.strokeStyle = this.color;
+        ctx.lineWidth = this.radius;
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(this.x, this.y);
+        ctx.stroke();
+        ctx.closePath();
+      };
+    }
+
+    var particles = [];
+    var particleCount = 50;
+    var particleSpeed = 0.05;
+    var trailLength = 0.05;
+
+    document.getElementById('particleCount').addEventListener('input', function() {
+      particleCount = this.value;
+      init();
+    });
+
+    document.getElementById('particleSpeed').addEventListener('input', function() {
+      particleSpeed = parseFloat(this.value);
+    });
+
+    document.getElementById('trailLength').addEventListener('input', function() {
+      trailLength = parseFloat(this.value);
+    });
+
+    function init() {
+      particles = [];
+      for (var i = 0; i < particleCount; i++) {
+        var radius = (Math.random() * 2) + 1;
+        var color = colors[Math.floor(Math.random() * 4)];
+        particles.push(new Particle(canvas.width / 2, canvas.height / 2, radius, color));
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      ctx.fillStyle = `rgba(0, 0, 0, ${trailLength})`;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+      }
+    }
+
+    init();
+    animate();
+  </script>
+</body>
+</html>
