@@ -184,7 +184,7 @@
                 context.strokeRect(shapeStartX, shapeStartY, width, height);
             } else if (selectedShape === 'circle') {
                 const radius = Math.sqrt(
-                    Math.pow(e.offsetX - shapeStartX, 2) + Math.pow(e.offsetY - shapeStartY, 2)
+                    Math.pow(e.offsetX - shapeStartX, 2) + Math.pow(e .offsetY - shapeStartY, 2)
                 );
                 context.beginPath();
                 context.arc(shapeStartX, shapeStartY, radius, 0, 2 * Math.PI);
