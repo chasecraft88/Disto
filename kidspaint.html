@@ -49,17 +49,17 @@
         <!-- Thumbnails will be added dynamically here -->
     </div>
     <div id="colorPalette">
-        <div class="color" style="background-color: red;"></div>
-        <div class="color" style="background-color: green;"></div>
-        <div class="color" style="background-color: blue;"></div>
-        <div class="color" style="background-color: yellow;"></div>
-        <div class="color" style="background-color: purple;"></div>
-        <div class="color" style="background-color: pink;"></div>
-        <div class="color" style="background-color: orange;"></div>
-        <div class="color" style="background-color: brown;"></div>
+        <div class="color" style="background-color: red;" onclick="changeColor('red')"></div>
+        <div class="color" style="background-color: green;" onclick="changeColor('green')"></div>
+        <div class="color" style="background-color: blue;" onclick="changeColor('blue')"></div>
+        <div class="color" style="background-color: yellow;" onclick="changeColor('yellow')"></div>
+        <div class="color" style="background-color: purple;" onclick="changeColor('purple')"></div>
+        <div class="color" style="background-color: pink;" onclick="changeColor('pink')"></div>
+        <div class="color" style="background-color: orange;" onclick="changeColor('orange')"></div>
+        <div class="color" style="background-color: brown;" onclick="changeColor('brown')"></div>
     </div>
 
-    <canvas id="drawingCanvas" width="800" height="600"></canvas>
+    <canvas id="drawingCanvas" width="800" height="600" onmousedown="startDrawing(event)" onmousemove="draw(event)" onmouseup="stopDrawing()"></canvas>
     <canvas id="brushIndicatorCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
 
     <script>
@@ -85,6 +85,27 @@
         const brushIndicatorCanvas = document.getElementById('brushIndicatorCanvas');
         const brushIndicatorContext = brushIndicatorCanvas.getContext('2d');
 
+        function changeColor(color) {
+            currentColor = color;
+        }
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+            if (isShapeMode) {
+                [shapeStartX, shapeStartY] = [e.offsetX, e.offsetY];
+            } else if (isFilling) {
+                fillArea(e.offsetX, e.offsetY, currentColor);
+            }
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            if (isShapeMode) {
+                drawShape();
+            }
+        }
+
         function draw(e) {
             if (!isDrawing) return;
             context.strokeStyle = currentColor;
@@ -99,49 +120,24 @@
             [lastX, lastY] = [e.offsetX, e.offsetY];
         }
 
-        function drawShape(e) {
+        function drawShape() {
             context.strokeStyle = currentColor;
             context.lineWidth = brushSize.value;
             context.lineCap = 'round';
 
             if (selectedShape === 'rectangle') {
-                const width = e.offsetX - shapeStartX;
-                const height = e.offsetY - shapeStartY;
+                const width = lastX - shapeStartX;
+                const height = lastY - shapeStartY;
                 context.strokeRect(shapeStartX, shapeStartY, width, height);
             } else if (selectedShape === 'circle') {
                 const radius = Math.sqrt(
-                    Math.pow(e.offsetX - shapeStartX, 2) + Math.pow(e.offsetY - shapeStartY, 2)
+                    Math.pow(lastX - shapeStartX, 2) + Math.pow(lastY - shapeStartY, 2)
                 );
                 context.beginPath();
                 context.arc(shapeStartX, shapeStartY, radius, 0, 2 * Math.PI);
                 context.stroke();
             }
         }
-
-        canvas.addEventListener('mousedown', (e) => {
-            isDrawing = true;
-            [lastX, lastY] = [e.offsetX, e.offsetY];
-            if (isShapeMode) {
-                [shapeStartX, shapeStartY] = [e.offsetX, e.offsetY];
-            } else if (isFilling) {
-                fillArea(e.offsetX, e.offsetY, currentColor);
-            }
-        });
-
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-            if (isShapeMode) {
-                drawShape();
-            }
-        });
-
-        canvas.addEventListener('mouseout', () => {
-            isDrawing = false; // Corrected the typo here
-            if (isShapeMode) {
-                drawShape();
-            }
-        });
 
         function toggleShapeMode() {
             isShapeMode = !isShapeMode;
