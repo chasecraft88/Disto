@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kids' Coloring Fun</title>
+    <style>
+        #drawingCanvas {
+            border: 1px solid black;
+            background-color: white;
+        }
+        body {
+            background: linear-gradient(135deg, #ffd3e2, #ffedbc);
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Kids' Coloring Fun</h1>
+    <div>
+        <label>Choose Color: </label>
+        <input type="color" id="colorPicker">
+    </div>
+    <div>
+        <label>Brush Size: </label>
+        <input type="number" id="brushSize" value="5" min="1" max="50">
+    </div>
+    <button onclick="clearCanvas()">Clear Canvas</button>
+    <button onclick="toggleShapeMode()">Draw Shapes</button>
+    <button onclick="toggleEraserMode()">Eraser</button>
+    <button onclick="saveCanvas()">Save Image</button>
+    <input type="file" id="imageLoader" accept="image/*">
+    <button onclick="loadImage()">Load Image</button>
+    <hr>
+    <h2>Choose a Template</h2>
+    <div>
+        <button onclick="loadBatmanTemplate()">Batman</button>
+        <button onclick="loadOtherCharacterTemplate()">Other Character</button>
+        <button onclick="loadShapeTemplate()">Shapes</button>
+    </div>
+
+    <canvas id="drawingCanvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('drawingCanvas');
+        const context = canvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const brushSize = document.getElementById('brushSize');
+        const imageLoader = document.getElementById('imageLoader');
+        let isDrawing = false;
+        let isErasing = false;
+        let isShapeMode = false;
+        let lastX = 0;
+        let lastY = 0;
+        let shapeStartX = 0;
+        let shapeStartY = 0;
+        let selectedShape = 'rectangle';
+
+        // Load Batman image for kids to color
+        let currentTemplate = new Image();
+        currentTemplate.src = 'blank_template.png'; // Replace with your template URL
+        currentTemplate.onload = function () {
+            context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+        };
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+            if (isShapeMode) {
+                [shapeStartX, shapeStartY] = [e.offsetX, e.offsetY];
+            }
+        });
+
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+            if (isShapeMode) {
+                drawShape();
+            }
+        });
+        canvas.addEventListener('mouseout', () => {
+            isDrawing = false;
+            if (isShapeMode) {
+                drawShape();
+            }
+        });
+
+        function draw(e) {
+            if (!isDrawing) return;
+            context.lineWidth = brushSize.value;
+            if (!isErasing) {
+                context.strokeStyle = colorPicker.value;
+            } else {
+                context.globalCompositeOperation = 'destination-out';
+            }
+            context.lineJoin = 'round';
+            context.lineCap = 'round';
+            context.beginPath();
+            context.moveTo(lastX, lastY);
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function clearCanvas() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            // Re-draw the current template after clearing
+            context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+        }
+
+        function toggleShapeMode() {
+            isShapeMode = !isShapeMode;
+        }
+
+        function toggleEraserMode() {
+            isErasing = !isErasing;
+            context.globalCompositeOperation = 'source-over';
+        }
+
+        function drawShape() {
+            const width = Math.abs(shapeStartX - lastX);
+            const height = Math.abs(shapeStartY - lastY);
+            context.lineWidth = brushSize.value;
+            if (!isErasing) {
+                context.strokeStyle = colorPicker.value;
+            } else {
+                context.globalCompositeOperation = 'destination-out';
+            }
+            context.lineJoin = 'round';
+            context.lineCap = 'round';
+
+            if (selectedShape === 'rectangle') {
+                context.strokeRect(
+                    Math.min(shapeStartX, lastX),
+                    Math.min(shapeStartY, lastY),
+                    width,
+                    height
+                );
+            } else if (selectedShape === 'circle') {
+                context.beginPath();
+                context.ellipse(
+                    shapeStartX,
+                    shapeStartY,
+                    width,
+                    height,
+                    0,
+                    0,
+                    2 * Math.PI
+                );
+                context.stroke();
+            }
+            context.globalCompositeOperation = 'source-over';
+        }
+
+        function saveCanvas() {
+            const dataURL = canvas.toDataURL();
+            const link = document.createElement('a');
+            link.href = dataURL;
+            link.download = 'my_coloring.png';
+            link.click();
+        }
+
+        imageLoader.addEventListener('change', loadImage);
+
+        function loadImage() {
+            const file = imageLoader.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
+                        context.clearRect(0, 0, canvas.width, canvas.height);
+                        context.drawImage(img, 0, 0);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Functions to load different templates
+        function loadBatmanTemplate() {
+            currentTemplate.src = 'batman_template.png'; // Replace with your template URL
+            currentTemplate.onload = function () {
+                context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+            };
+        }
+
+        function loadOtherCharacterTemplate() {
+            currentTemplate.src = 'other_character_template.png'; // Replace with your template URL
+            currentTemplate.onload = function () {
+                context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+            };
+        }
+
+        function loadShapeTemplate() {
+            currentTemplate.src = 'shapes_template.png'; // Replace with your template URL
+            currentTemplate.onload = function () {
+                context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+            };
+        }
+    </script>
+</body>
+</html>
