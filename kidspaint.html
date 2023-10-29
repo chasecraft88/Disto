@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kids' Coloring Fun</title>
+<title>Kids' Coloring Fun</title>
     <style>
         #drawingCanvas {
             border: 1px solid black;
@@ -133,6 +133,38 @@
             }
         });
 
+               function draw(e) {
+            if (!isDrawing) return;
+            context.strokeStyle = currentColor;
+            context.lineWidth = brushSize.value;
+            context.lineCap = 'round';
+
+            context.beginPath();
+            context.moveTo(lastX, lastY);
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+
+        function drawShape() {
+            context.strokeStyle = currentColor;
+            context.lineWidth = brushSize.value;
+            context.lineCap = 'round';
+
+            if (selectedShape === 'rectangle') {
+                const width = e.offsetX - shapeStartX;
+                const height = e.offsetY - shapeStartY;
+                context.strokeRect(shapeStartX, shapeStartY, width, height);
+            } else if (selectedShape === 'circle') {
+                const radius = Math.sqrt(
+                    Math.pow(e.offsetX - shapeStartX, 2) + Math.pow(e.offsetY - shapeStartY, 2)
+                );
+                context.beginPath();
+                context.arc(shapeStartX, shapeStartY, radius, 0, 2 * Math.PI);
+                context.stroke();
+            }
+        }
         // Function to load a template
         function loadTemplate(imageUrl) {
             currentTemplate.src = imageUrl;
