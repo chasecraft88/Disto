@@ -53,7 +53,7 @@
         <div class="color" style="background-color: green;"></div>
         <div class="color" style="background-color: blue;"></div>
         <div class="color" style="background-color: yellow;"></div>
-        <div class="color" style="background-color: purple;"></div>
+        <div class "color" style="background-color: purple;"></div>
         <div class="color" style="background-color: pink;"></div>
         <div class="color" style="background-color: orange;"></div>
         <div class="color" style="background-color: brown;"></div>
@@ -85,38 +85,6 @@
         const brushIndicatorCanvas = document.getElementById('brushIndicatorCanvas');
         const brushIndicatorContext = brushIndicatorCanvas.getContext('2d');
 
-        function createNewLayer() {
-            const newCanvas = document.createElement('canvas');
-            newCanvas.width = canvas.width;
-            newCanvas.height = canvas.height;
-            layers.push(newCanvas);
-            currentLayer = layers.length - 1;
-        }
-
-        createNewLayer();
-
-        function clearCanvas() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        function undo() {
-            if (currentLayer > 0) {
-                currentLayer--;
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                context.drawImage(layers[currentLayer], 0, 0);
-            }
-        }
-
-        function redo() {
-            if (currentLayer < layers.length - 1) {
-                currentLayer++;
-                context.clearRect(0, 0, canvas.width, canvas.height);
-                context.drawImage(layers[currentLayer], 0, 0);
-            }
-        }
-
-        // Rest of the code remains the same as the previous response
-        // ...
 
         function draw(e) {
             if (!isDrawing) return;
@@ -126,7 +94,7 @@
 
             context.beginPath();
             context.moveTo(lastX, lastY);
-            context.lineTo(e.offset X, e.offsetY);
+            context.lineTo(e.offsetX, e.offsetY);
             context.stroke();
 
             [lastX, lastY] = [e.offsetX, e.offsetY];
@@ -170,7 +138,7 @@
         });
 
         canvas.addEventListener('mouseout', () => {
-            isDrawing = false;
+            isDrawing is false;
             if (isShapeMode) {
                 drawShape();
             }
@@ -192,7 +160,47 @@
         function toggleBucketMode() {
             isFilling = !isFilling;
         }
+        
 
+        function createNewLayer() {
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = canvas.width;
+            newCanvas.height = canvas.height;
+            layers.push(newCanvas);
+            currentLayer = layers.length - 1;
+        }
+
+        createNewLayer();
+
+        function clearCanvas() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function undo() {
+            if (currentLayer > 0) {
+                currentLayer--;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(layers[currentLayer], 0, 0);
+            }
+        }
+
+        function redo() {
+            if (currentLayer < layers.length - 1) {
+                currentLayer++;
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(layers[currentLayer], 0, 0);
+            }
+        }
+
+      // Function to load a template
+        function loadTemplate(imageUrl) {
+            currentTemplate.src = imageUrl;
+            currentTemplate.onload = function () {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
+            };
+        }
+     
         // Function to load a template
         function loadTemplate(imageUrl) {
             currentTemplate.src = imageUrl;
@@ -219,7 +227,6 @@
                 reader.readAsDataURL(file);
             }
         }
-
         function fillArea(x, y, fillColor) {
             // Get the canvas pixel data
             const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -259,8 +266,8 @@
         }
 
         function setPixelColor(x, y, data, color) {
-            const index = (y * canvas.width + x) * 4;
-            data[index] = color[0];
+            const index = (y * canvas width + x) * 4;
+            data [index] = color[0];
             data[index + 1] = color[1];
             data[index + 2] = color[2];
             data[index + 3] = color[3];
@@ -280,6 +287,7 @@
             brushIndicatorContext.arc(lastX, lastY, brushIndicatorSize, 0, Math.PI * 2);
             brushIndicatorContext.stroke();
         }
+
     </script>
 </body>
 </html>
