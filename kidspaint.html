@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kids' Coloring Fun</title>
+   <title>Kids' Coloring Fun</title>
     <style>
         #drawingCanvas {
             border: 1px solid black;
@@ -58,6 +58,7 @@
     </div>
 
     <canvas id="drawingCanvas" width="800" height="600"></canvas>
+    <canvas id="brushIndicatorCanvas" style="position: absolute; top: 0; left: 0;"></canvas>
 
     <script>
         const canvas = document.getElementById('drawingCanvas');
@@ -67,6 +68,8 @@
         const imageLoader = document.getElementById('imageLoader');
         const colorPalette = document.getElementById('colorPalette');
         const thumbnailsContainer = document.getElementById('thumbnails');
+        const brushIndicatorCanvas = document.getElementById('brushIndicatorCanvas');
+        const brushIndicatorContext = brushIndicatorCanvas.getContext('2d');
         let isDrawing = false;
         let isErasing = false;
         let isShapeMode = false;
@@ -133,7 +136,30 @@
             }
         });
 
-               function draw(e) {
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+
+        function handleTouchStart(e) {
+            const touch = e.touches[0];
+            [lastX, lastY] = [touch.clientX - canvas.getBoundingClientRect().left, touch.clientY - canvas.getBoundingClientRect().top];
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            [lastX, lastY] = [touch.clientX - canvas.getBoundingClientRect().left, touch.clientY - canvas.getBoundingClientRect().top];
+            draw();
+        }
+
+        function handleTouchEnd() {
+            isDrawing = false;
+            if (isShapeMode) {
+                drawShape();
+            }
+        }
+
+        function draw(e) {
             if (!isDrawing) return;
             context.strokeStyle = currentColor;
             context.lineWidth = brushSize.value;
@@ -165,7 +191,7 @@
                 context.stroke();
             }
         }
-        // Function to load a template
+
         function loadTemplate(imageUrl) {
             currentTemplate.src = imageUrl;
             currentTemplate.onload = function () {
@@ -176,7 +202,8 @@
 
         function saveCanvas() {
             const dataURL = canvas.toDataURL();
-            const link = document.createElement('a');            link.href = dataURL;
+            const link = document.createElement('a');
+            link.href = dataURL;
             link.download = 'my_coloring.png';
             link.click();
         }
@@ -209,17 +236,15 @@
         }
 
         function updateBrushIndicator() {
-            // Draw a brush indicator
-            const brushIndicatorSize = brushSize.value * 2;
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(currentTemplate, 0, 0, canvas.width, canvas.height);
-            context.strokeStyle = currentColor;
-            context.lineWidth = 2;
-            context.beginPath();
-            context.arc(lastX, lastY, brushIndicatorSize, 0, Math.PI * 2);
-            context.stroke();
+            brushIndicatorContext.clearRect(0, 0, canvas.width, canvas.height);
+            brushIndicatorContext.strokeStyle = currentColor;
+            brushIndicatorContext.lineWidth = brushSize.value * 2;
+            brushIndicatorContext.lineCap = 'round';
+
+            brushIndicatorContext.beginPath();
+            brushIndicatorContext.arc(lastX, lastY, brushSize.value, 0, Math.PI * 2);
+            brushIndicatorContext.stroke();
         }
     </script>
 </body>
 </html>
-```
