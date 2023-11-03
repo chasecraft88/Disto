@@ -1,10 +1,7 @@
 'use strict';
 
 /*
-
-https://code.sololearn.com/Ww
-https://code.sololearn.co
-
+info
 
   91 -  134:    Animation template
  141 -  194:    Game loop
